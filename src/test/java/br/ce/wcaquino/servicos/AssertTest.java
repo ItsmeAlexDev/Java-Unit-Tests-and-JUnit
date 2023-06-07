@@ -1,6 +1,15 @@
 package br.ce.wcaquino.servicos;
 
-import org.junit.Assert;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 import br.ce.wcaquino.entidades.Usuario;
@@ -9,31 +18,35 @@ public class AssertTest {
 	
 	@Test
 	public void test() {
-		Assert.assertTrue(true);
-		Assert.assertFalse(false);
+		assertTrue(true);
+		assertFalse(false);
 		
-		Assert.assertEquals(1, 1);
-		Assert.assertEquals(0.12345, 0.12, 0.1);
-		Assert.assertEquals(Math.PI, 3.14, 0.1);
+		assertEquals(1, 1);
+		assertEquals(0.12345, 0.12, 0.1);
+		assertEquals(Math.PI, 3.14, 0.1);
 		
 		int i = 5;
 		Integer i2 = 5;
-		Assert.assertEquals(Integer.valueOf(i), i2);
-		Assert.assertEquals(i, i2.intValue());
+		assertEquals(Integer.valueOf(i), i2);
+		assertEquals(i, i2.intValue());
 		
 		String str = "bola";
 		String str2 = "bola";
 		String str3 = "Bola";
-		Assert.assertEquals(str, str2);
-		Assert.assertTrue(str.equalsIgnoreCase(str3));
-		Assert.assertTrue(str.startsWith("bo"));
+		assertEquals(str, str2);
+		assertTrue(str.equalsIgnoreCase(str3));
+		assertTrue(str.startsWith("bo"));
 		
 		Usuario u1 = new Usuario("user_1");
 		Usuario u2 = new Usuario("user_1");
 		Usuario u3 = u2;
 		Usuario u4 = null;
-		Assert.assertEquals(u1, u2);
-		Assert.assertSame(u2, u3);
-		Assert.assertNull(u4);
+		assertEquals(u1, u2);
+		assertSame(u2, u3);
+		assertNull(u4);
+		
+		i = 10;
+		assertThat(i, is(equalTo(10)));
+		assertThat(i, is(not(6)));
 	}
 }
