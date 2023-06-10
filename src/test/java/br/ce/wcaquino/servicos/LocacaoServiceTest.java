@@ -111,4 +111,54 @@ public class LocacaoServiceTest {
 		service.alugarFilme(user, null);
 		
 	}
+	
+	@Test
+	public void test25Desconto3Filme() throws Exception {
+		List <Filme> filmes = Arrays.asList(new Filme("Filme_1", 2, 4.0),
+											new Filme("Filme_2", 2, 4.0),
+											new Filme("Filme_3", 2, 4.0));
+
+		Locacao resultado = service.alugarFilme(user, filmes);
+	
+		assertThat(resultado.getValor(), is(11.0));
+	}
+	
+	@Test
+	public void test50Desconto4Filme() throws Exception {
+		List <Filme> filmes = Arrays.asList(new Filme("Filme_1", 2, 4.0),
+											new Filme("Filme_2", 2, 4.0),
+											new Filme("Filme_3", 2, 4.0),
+											new Filme("Filme_4", 2, 4.0));
+
+		Locacao resultado = service.alugarFilme(user, filmes);
+	
+		assertThat(resultado.getValor(), is(13.0));
+	}
+	
+	@Test
+	public void test75Desconto5Filme() throws Exception {
+		List <Filme> filmes = Arrays.asList(new Filme("Filme_1", 2, 4.0),
+											new Filme("Filme_2", 2, 4.0),
+											new Filme("Filme_3", 2, 4.0),
+											new Filme("Filme_4", 2, 4.0),
+											new Filme("Filme_5", 2, 4.0));
+
+		Locacao resultado = service.alugarFilme(user, filmes);
+	
+		assertThat(resultado.getValor(), is(14.0));
+	}
+	
+	@Test
+	public void test100Desconto6Filme() throws Exception {
+		List <Filme> filmes = Arrays.asList(new Filme("Filme_1", 2, 4.0),
+											new Filme("Filme_2", 2, 4.0),
+											new Filme("Filme_3", 2, 4.0),
+											new Filme("Filme_4", 2, 4.0),
+											new Filme("Filme_5", 2, 4.0),
+											new Filme("Filme_6", 2, 4.0));
+
+		Locacao resultado = service.alugarFilme(user, filmes);
+	
+		assertThat(resultado.getValor(), is(14.0));
+	}
 }

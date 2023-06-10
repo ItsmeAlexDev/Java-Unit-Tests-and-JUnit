@@ -16,17 +16,21 @@ public class LocacaoService {
 		if((usuario == null) || (filmes == null || filmes.isEmpty())) 
 			throw new Exception("Usuario ou filme invalido!");
 		
-		for (Filme filme : filmes) {
+		for (Filme filme : filmes) 
 			if(filme.getEstoque() == 0) 
 				throw new Exception("Filme fora de estoque!");
-		}
+		
 		
 		Locacao locacao = new Locacao();
 		locacao.setFilmes(filmes);
 		locacao.setUsuario(usuario);
 		locacao.setDataLocacao(new Date());
 		Double valorTotal = 0d;
-		for (Filme filme : filmes) valorTotal += filme.getPrecoLocacao();
+		for (int filmeIndex = 0; filmeIndex < filmes.size(); filmeIndex++) {
+			Double valorFilme = filmes.get(filmeIndex).getPrecoLocacao();
+			if (filmeIndex > 1 && filmeIndex < 6) valorFilme *= 1 - 0.25 * (filmeIndex - 1);
+			valorTotal += valorFilme;
+		}
 		locacao.setValor(valorTotal);
 
 		//Entrega no dia seguinte
