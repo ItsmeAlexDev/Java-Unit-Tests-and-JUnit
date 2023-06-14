@@ -28,6 +28,7 @@ import org.junit.rules.ExpectedException;
 import br.com.alexdev.junit.entidades.Filme;
 import br.com.alexdev.junit.entidades.Locacao;
 import br.com.alexdev.junit.entidades.Usuario;
+import buildermaster.BuilderMaster;
 
 public class LocacaoServiceTest {
 
@@ -101,5 +102,9 @@ public class LocacaoServiceTest {
 		Locacao resultado = service.alugarFilme(user, filmes);
 		
 		assertThat(resultado.getDataRetorno(), caiNumaSegunda());
+	}
+	
+	public static void main(String[] args) {
+		new BuilderMaster().gerarCodigoClasse(Locacao.class);
 	}
 }
