@@ -5,6 +5,7 @@ import static br.com.alexdev.junit.builders.UsuarioBuilder.umUsuario;
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
+import br.com.alexdev.junit.daos.LocacaoDAO;
 import br.com.alexdev.junit.entidades.Filme;
 import br.com.alexdev.junit.entidades.Locacao;
 import br.com.alexdev.junit.entidades.Usuario;
@@ -37,6 +39,8 @@ public class CalculoValorLocacaoTest {
 	public void setup() {
 		service = new LocacaoService();
 		user = umUsuario().agora();
+		LocacaoDAO dao = mock(LocacaoDAO.class);
+		service.setLocacaoDAO(dao);
 	}
 	
 	private static Filme filme1 = umFilme().agora();

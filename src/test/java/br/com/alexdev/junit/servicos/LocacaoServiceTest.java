@@ -13,6 +13,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeFalse;
+import static org.mockito.Mockito.mock;
 
 import java.util.Date;
 import java.util.List;
@@ -25,10 +26,10 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
+import br.com.alexdev.junit.daos.LocacaoDAO;
 import br.com.alexdev.junit.entidades.Filme;
 import br.com.alexdev.junit.entidades.Locacao;
 import br.com.alexdev.junit.entidades.Usuario;
-import buildermaster.BuilderMaster;
 
 public class LocacaoServiceTest {
 
@@ -45,6 +46,8 @@ public class LocacaoServiceTest {
 	public void setup() {
 		service = new LocacaoService();
 		user = umUsuario().agora();
+		LocacaoDAO dao = mock(LocacaoDAO.class);
+		service.setLocacaoDAO(dao);
 	}
 	
 	@After
@@ -102,9 +105,5 @@ public class LocacaoServiceTest {
 		Locacao resultado = service.alugarFilme(user, filmes);
 		
 		assertThat(resultado.getDataRetorno(), caiNumaSegunda());
-	}
-	
-	public static void main(String[] args) {
-		new BuilderMaster().gerarCodigoClasse(Locacao.class);
 	}
 }
