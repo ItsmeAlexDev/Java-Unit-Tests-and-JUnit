@@ -15,26 +15,34 @@ import br.com.alexdev.junit.utils.DataUtils;
 public class LocacaoService {
 	
 	private LocacaoDAO dao;
+	private SPCService spcService;
+	private EmailService emailService;
 	
 	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws Exception {
 		
-		if((usuario == null) || (filmes == null || filmes.isEmpty())) 
+		if ((usuario == null) || (filmes == null || filmes.isEmpty())) 
 			throw new Exception("Usuario ou filme invalido!");
 		
 		for (Filme filme : filmes) 
 			if(filme.getEstoque() == 0) 
 				throw new Exception("Filme fora de estoque!");
 		
+		if (spcService.isNegativado(usuario))
+			throw new Exception("Usuario Negativado");
 		
 		Locacao locacao = new Locacao();
+		
 		locacao.setFilmes(filmes);
 		locacao.setUsuario(usuario);
 		locacao.setDataLocacao(new Date());
+		
 		Double valorTotal = 0d;
+		
 		for (int filmeIndex = 0; filmeIndex < filmes.size(); filmeIndex++) {
 			Double valorFilme = filmes.get(filmeIndex).getPrecoLocacao();
 			if (filmeIndex > 1 && filmeIndex < 6) valorFilme *= 1 - 0.25 * (filmeIndex - 1);
 			valorTotal += valorFilme;
+		
 		}
 		locacao.setValor(valorTotal);
 
@@ -49,7 +57,21 @@ public class LocacaoService {
 		return locacao;
 	}
 	
+	public void notificarAtrasos() {
+		List<Locacao> locacoes = dao.obterLocacoesPendentes();
+		for (Locacao locacao : locacoes)
+			emailService.notificarAtraso(locacao.getUsuario());
+	}
+	
 	public void setLocacaoDAO(LocacaoDAO dao) {
 		this.dao = dao;
+	}
+	
+	public void setSPCService(SPCService spcService) {
+		this.spcService = spcService;
+	}
+	
+	public void setEmailServices(EmailService emailService) {
+		this.emailService = emailService;
 	}
 }
