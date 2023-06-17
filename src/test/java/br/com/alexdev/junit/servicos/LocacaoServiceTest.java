@@ -6,7 +6,6 @@ import static br.com.alexdev.junit.builders.UsuarioBuilder.umUsuario;
 import static br.com.alexdev.junit.matchers.MatchersLocais.caiNumaSegunda;
 import static br.com.alexdev.junit.matchers.MatchersLocais.isHoje;
 import static br.com.alexdev.junit.matchers.MatchersLocais.isHojeComMaisXDias;
-import static br.com.alexdev.junit.utils.DataUtils.obterDataComDiferencaDias;
 import static br.com.alexdev.junit.utils.DataUtils.verificarDiaSemana;
 import static java.util.Arrays.asList;
 import static java.util.Calendar.SATURDAY;
@@ -15,8 +14,11 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeFalse;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
@@ -126,7 +128,7 @@ public class LocacaoServiceTest {
 	public void naoAlugaParaNegativadoNoSPC() {
 		List <Filme> filme = asList(umFilme().agora());
 		
-		when(spc.isNegativado(user)).thenReturn(true);
+		when(spc.isNegativado(any(Usuario.class))).thenReturn(true);
 
 		try {
 			service.alugarFilme(user, filme);
@@ -140,15 +142,30 @@ public class LocacaoServiceTest {
 	
 	@Test
 	public void emailParaNotificarAtrasos() {
-		List<Locacao> locacoes = asList(umLocacao()
-				.comUsuario(user)
-				.comDataRetorno(obterDataComDiferencaDias(-2))
-				.agora());
+		user = umUsuario().comNome("user atrasado").agora();
+		Usuario user2 = umUsuario().comNome("user em dia").agora();
+		Usuario user3 = umUsuario().comNome("outro user atrasado").agora();
+		
+		List<Locacao> locacoes = asList(
+				umLocacao()
+					.comUsuario(user)
+					.atrasado()
+					.agora(),
+				umLocacao()
+					.comUsuario(user2)
+					.agora(),
+				umLocacao()
+					.comUsuario(user3)
+					.atrasado()
+					.agora());
 		
 		when(dao.obterLocacoesPendentes()).thenReturn(locacoes);
 		
 		service.notificarAtrasos();
 		
 		verify(email).notificarAtraso(user);
+		verify(email, never()).notificarAtraso(user2);
+		verify(email).notificarAtraso(user3);
+		verifyNoMoreInteractions(email);
 	}
 }

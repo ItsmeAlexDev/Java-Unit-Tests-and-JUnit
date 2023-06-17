@@ -2,6 +2,7 @@ package br.com.alexdev.junit.builders;
 
 import static br.com.alexdev.junit.builders.FilmeBuilder.umFilme;
 import static br.com.alexdev.junit.builders.UsuarioBuilder.umUsuario;
+import static br.com.alexdev.junit.utils.DataUtils.obterDataComDiferencaDias;
 import static java.util.Arrays.asList;
 
 import java.util.Date;
@@ -51,6 +52,12 @@ public class LocacaoBuilder {
 
 	public LocacaoBuilder comDataRetorno(Date param) {
 		elemento.setDataRetorno(param);
+		return this;
+	}
+	
+	public LocacaoBuilder atrasado() {
+		elemento.setDataLocacao(obterDataComDiferencaDias(-4));
+		elemento.setDataRetorno(obterDataComDiferencaDias(-2));
 		return this;
 	}
 
