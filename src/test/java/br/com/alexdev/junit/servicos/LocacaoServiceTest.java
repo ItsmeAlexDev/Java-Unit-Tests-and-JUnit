@@ -14,12 +14,13 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeFalse;
+import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 import java.util.Date;
 import java.util.List;
@@ -31,6 +32,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 import br.com.alexdev.junit.daos.LocacaoDAO;
 import br.com.alexdev.junit.entidades.Filme;
@@ -39,11 +43,16 @@ import br.com.alexdev.junit.entidades.Usuario;
 
 public class LocacaoServiceTest {
 
-	private LocacaoService service;
 	private Usuario user;
 	
+	@InjectMocks
+	private LocacaoService service;
+	
+	@Mock
 	private LocacaoDAO dao;
+	@Mock
 	private SPCService spc;
+	@Mock
 	private EmailService email;
 	
 	@Rule
@@ -57,14 +66,7 @@ public class LocacaoServiceTest {
 		service = new LocacaoService();
 		user = umUsuario().agora();
 		
-		dao = mock(LocacaoDAO.class);
-		service.setLocacaoDAO(dao);
-		
-		spc = mock(SPCService.class);
-		service.setSPCService(spc);
-		
-		email = mock(EmailService.class);
-		service.setEmailServices(email);
+		initMocks(this);
 	}
 	
 	@After
@@ -125,7 +127,7 @@ public class LocacaoServiceTest {
 	}
 	
 	@Test
-	public void naoAlugaParaNegativadoNoSPC() {
+	public void naoAlugaParaNegativadoNoSPC() throws Exception {
 		List <Filme> filme = asList(umFilme().agora());
 		
 		when(spc.isNegativado(any(Usuario.class))).thenReturn(true);
@@ -167,5 +169,34 @@ public class LocacaoServiceTest {
 		verify(email, never()).notificarAtraso(user2);
 		verify(email).notificarAtraso(user3);
 		verifyNoMoreInteractions(email);
+	}
+	
+	@Test
+	public void erroNoSPC() throws Exception {
+		List <Filme> filme = asList(umFilme().agora());
+		
+		when(spc.isNegativado(user)).thenThrow(new Exception("Falha no sistema do SPC, ou algo assim"));
+		
+		exception.expect(Exception.class);
+		exception.expectMessage("Falha no SPC");
+		
+		service.alugarFilme(user, filme);
+		
+	}
+	
+	@Test
+	public void prorrogarLocacao() {
+		Locacao locacao = umLocacao().agora();
+		
+		service.prorrogarLocacao(locacao, 3);
+		
+		ArgumentCaptor<Locacao> argCapt = forClass(Locacao.class);
+		verify(dao).salvar(argCapt.capture());
+		Locacao locacaoRetornada = argCapt.getValue();
+		
+		error.checkThat(locacaoRetornada.getValor(), is(12.0));
+		error.checkThat(locacaoRetornada.getDataLocacao(), isHoje());
+		error.checkThat(locacaoRetornada.getDataRetorno(), isHojeComMaisXDias(3));		
+		
 	}
 }

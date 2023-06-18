@@ -1,5 +1,9 @@
 package br.com.alexdev.junit.matchers;
 
+import static br.com.alexdev.junit.utils.DataUtils.obterDataComDiferencaDias;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.hamcrest.Description;
@@ -16,12 +20,15 @@ public class DataDiferencaDiasMatcher extends TypeSafeMatcher<Date> {
 	}
 	
 	public void describeTo(Description desc) {
-		desc.appendText("quem leu eh gay lol");
+		Date dataEsperada = obterDataComDiferencaDias(dias);
+		DateFormat format = new SimpleDateFormat("dd/MM/YYYY");
+		
+		desc.appendText(format.format(dataEsperada));
 	}
 
 	@Override
 	protected boolean matchesSafely(Date data) {
-		return DataUtils.isMesmaData(data, DataUtils.obterDataComDiferencaDias(dias));
+		return DataUtils.isMesmaData(data, obterDataComDiferencaDias(dias));
 	}
 	
 

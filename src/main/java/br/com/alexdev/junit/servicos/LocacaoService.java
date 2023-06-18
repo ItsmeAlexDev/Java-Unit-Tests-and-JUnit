@@ -1,6 +1,7 @@
 package br.com.alexdev.junit.servicos;
 
 import static br.com.alexdev.junit.utils.DataUtils.adicionarDias;
+import static br.com.alexdev.junit.utils.DataUtils.obterDataComDiferencaDias;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -27,7 +28,15 @@ public class LocacaoService {
 			if(filme.getEstoque() == 0) 
 				throw new Exception("Filme fora de estoque!");
 		
-		if (spcService.isNegativado(usuario))
+		boolean negativado;
+		
+		try {
+			negativado = spcService.isNegativado(usuario);
+		} catch (Exception e) { 
+			throw new Exception("Falha no SPC");
+		}
+		
+		if (negativado)
 			throw new Exception("Usuario Negativado");
 		
 		Locacao locacao = new Locacao();
@@ -64,15 +73,16 @@ public class LocacaoService {
 				emailService.notificarAtraso(locacao.getUsuario());
 	}
 	
-	public void setLocacaoDAO(LocacaoDAO dao) {
-		this.dao = dao;
-	}
-	
-	public void setSPCService(SPCService spcService) {
-		this.spcService = spcService;
-	}
-	
-	public void setEmailServices(EmailService emailService) {
-		this.emailService = emailService;
+	public void prorrogarLocacao(Locacao locacao, int dias) {
+		Locacao newLocacao = new Locacao();
+		
+		newLocacao.setUsuario(locacao.getUsuario());
+		newLocacao.setFilmes(locacao.getFilmes());
+		newLocacao.setValor(locacao.getValor() * dias);
+		
+		newLocacao.setDataLocacao(new Date());
+		newLocacao.setDataRetorno(obterDataComDiferencaDias(dias));
+		
+		dao.salvar(newLocacao);
 	}
 }

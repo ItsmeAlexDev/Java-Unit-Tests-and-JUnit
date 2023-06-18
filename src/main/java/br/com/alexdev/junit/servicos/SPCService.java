@@ -4,5 +4,5 @@ import br.com.alexdev.junit.entidades.Usuario;
 
 public interface SPCService {
 	
-	public boolean isNegativado(Usuario user);
+	public boolean isNegativado(Usuario user) throws Exception;
 }
