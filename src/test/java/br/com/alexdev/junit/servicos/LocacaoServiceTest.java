@@ -6,6 +6,7 @@ import static br.com.alexdev.junit.builders.UsuarioBuilder.umUsuario;
 import static br.com.alexdev.junit.matchers.MatchersLocais.caiNumaSegunda;
 import static br.com.alexdev.junit.matchers.MatchersLocais.isHoje;
 import static br.com.alexdev.junit.matchers.MatchersLocais.isHojeComMaisXDias;
+import static br.com.alexdev.junit.utils.DataUtils.obterData;
 import static br.com.alexdev.junit.utils.DataUtils.verificarDiaSemana;
 import static java.util.Arrays.asList;
 import static java.util.Calendar.SATURDAY;
@@ -21,26 +22,32 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.util.Date;
 import java.util.List;
 
 import org.junit.After;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import br.com.alexdev.junit.daos.LocacaoDAO;
 import br.com.alexdev.junit.entidades.Filme;
 import br.com.alexdev.junit.entidades.Locacao;
 import br.com.alexdev.junit.entidades.Usuario;
+import br.com.alexdev.junit.utils.DataUtils;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({LocacaoService.class, DataUtils.class})
 public class LocacaoServiceTest {
 
 	private Usuario user;
@@ -76,9 +83,10 @@ public class LocacaoServiceTest {
 	
 	@Test
 	public void testLocacao() throws Exception{
-		assumeFalse(verificarDiaSemana(new Date(), SATURDAY));
-		
 		List<Filme> filme = asList(umFilme().comValor(5.0).agora());
+		
+
+		whenNew(Date.class).withNoArguments().thenReturn(obterData(28, 4, 2017));
 		
 		Locacao locacao = service.alugarFilme(user, filme);
 		
@@ -117,9 +125,9 @@ public class LocacaoServiceTest {
 	
 	@Test
 	public void retornoSegundaQuandoAlugadoNoSabado() throws Exception {
-		Assume.assumeTrue(verificarDiaSemana(new Date(), SATURDAY));
-		
 		List <Filme> filmes = asList(umFilme().agora());
+		
+		whenNew(Date.class).withNoArguments().thenReturn(obterData(29, 4, 2017));
 		
 		Locacao resultado = service.alugarFilme(user, filmes);
 		
@@ -175,7 +183,7 @@ public class LocacaoServiceTest {
 	public void erroNoSPC() throws Exception {
 		List <Filme> filme = asList(umFilme().agora());
 		
-		when(spc.isNegativado(user)).thenThrow(new Exception("Falha no sistema do SPC, ou algo assim"));
+		when(spc.isNegativado(any(Usuario.class))).thenThrow(new Exception("Falha no sistema do SPC, ou algo assim"));
 		
 		exception.expect(Exception.class);
 		exception.expectMessage("Falha no SPC");
