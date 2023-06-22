@@ -6,53 +6,44 @@ import static br.com.alexdev.junit.builders.UsuarioBuilder.umUsuario;
 import static br.com.alexdev.junit.matchers.MatchersLocais.caiNumaSegunda;
 import static br.com.alexdev.junit.matchers.MatchersLocais.isHoje;
 import static br.com.alexdev.junit.matchers.MatchersLocais.isHojeComMaisXDias;
+import static br.com.alexdev.junit.utils.DataUtils.isMesmaData;
 import static br.com.alexdev.junit.utils.DataUtils.obterData;
-import static br.com.alexdev.junit.utils.DataUtils.verificarDiaSemana;
 import static java.util.Arrays.asList;
-import static java.util.Calendar.SATURDAY;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-import java.util.Date;
 import java.util.List;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.Spy;
 
 import br.com.alexdev.junit.daos.LocacaoDAO;
 import br.com.alexdev.junit.entidades.Filme;
 import br.com.alexdev.junit.entidades.Locacao;
 import br.com.alexdev.junit.entidades.Usuario;
-import br.com.alexdev.junit.utils.DataUtils;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({LocacaoService.class, DataUtils.class})
 public class LocacaoServiceTest {
 
 	private Usuario user;
 	
-	@InjectMocks
+	@InjectMocks @Spy
 	private LocacaoService service;
 	
 	@Mock
@@ -76,23 +67,17 @@ public class LocacaoServiceTest {
 		initMocks(this);
 	}
 	
-	@After
-	public void tearDown() {
-		
-	}
-	
 	@Test
 	public void testLocacao() throws Exception{
 		List<Filme> filme = asList(umFilme().comValor(5.0).agora());
 		
-
-		whenNew(Date.class).withNoArguments().thenReturn(obterData(28, 4, 2017));
+		doReturn(obterData(28, 4, 2017)).when(service).getNewDate();
 		
 		Locacao locacao = service.alugarFilme(user, filme);
 		
 		error.checkThat(locacao.getValor(), is(equalTo(5.0)));
-		error.checkThat(locacao.getDataLocacao(), isHoje());
-		error.checkThat(locacao.getDataRetorno(), isHojeComMaisXDias(1));
+		error.checkThat(isMesmaData(locacao.getDataLocacao(), obterData(28, 4, 2017)), is(true));
+		error.checkThat(isMesmaData(locacao.getDataRetorno(), obterData(29, 4, 2017)), is(true));
 	}
 	
 	@Test(expected = Exception.class)
@@ -127,7 +112,7 @@ public class LocacaoServiceTest {
 	public void retornoSegundaQuandoAlugadoNoSabado() throws Exception {
 		List <Filme> filmes = asList(umFilme().agora());
 		
-		whenNew(Date.class).withNoArguments().thenReturn(obterData(29, 4, 2017));
+		doReturn(obterData(29, 4, 2017)).when(service).getNewDate();
 		
 		Locacao resultado = service.alugarFilme(user, filmes);
 		

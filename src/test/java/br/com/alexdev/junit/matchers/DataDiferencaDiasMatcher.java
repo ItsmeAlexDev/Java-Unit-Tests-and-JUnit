@@ -1,5 +1,6 @@
 package br.com.alexdev.junit.matchers;
 
+import static br.com.alexdev.junit.utils.DataUtils.isMesmaData;
 import static br.com.alexdev.junit.utils.DataUtils.obterDataComDiferencaDias;
 
 import java.text.DateFormat;
@@ -8,8 +9,6 @@ import java.util.Date;
 
 import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
-
-import br.com.alexdev.junit.utils.DataUtils;
 
 public class DataDiferencaDiasMatcher extends TypeSafeMatcher<Date> {
 
@@ -28,7 +27,7 @@ public class DataDiferencaDiasMatcher extends TypeSafeMatcher<Date> {
 
 	@Override
 	protected boolean matchesSafely(Date data) {
-		return DataUtils.isMesmaData(data, obterDataComDiferencaDias(dias));
+		return isMesmaData(data, obterDataComDiferencaDias(dias));
 	}
 	
 
