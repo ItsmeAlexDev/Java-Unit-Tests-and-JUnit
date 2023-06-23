@@ -4,7 +4,11 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+import br.ce.wcaquino.runners.ParallelRunner;
+
+@RunWith(ParallelRunner.class)
 public class CalculadoraTest{
 	
 	private int a;

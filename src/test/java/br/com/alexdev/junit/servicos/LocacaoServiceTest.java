@@ -13,6 +13,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+import static org.junit.rules.ExpectedException.none;
 import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -29,16 +30,19 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 
+import br.ce.wcaquino.runners.ParallelRunner;
 import br.com.alexdev.junit.daos.LocacaoDAO;
 import br.com.alexdev.junit.entidades.Filme;
 import br.com.alexdev.junit.entidades.Locacao;
 import br.com.alexdev.junit.entidades.Usuario;
 
+@RunWith(ParallelRunner.class)
 public class LocacaoServiceTest {
 
 	private Usuario user;
@@ -57,7 +61,7 @@ public class LocacaoServiceTest {
 	public ErrorCollector error = new ErrorCollector();
 	
 	@Rule
-	public ExpectedException exception = ExpectedException.none();
+	public ExpectedException exception = none();
 	
 	@Before
 	public void setup() {

@@ -1,5 +1,6 @@
 package br.com.alexdev.junit.servicos;
 
+import static java.lang.Integer.valueOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -27,7 +28,7 @@ public class AssertTest {
 		
 		int i = 5;
 		Integer i2 = 5;
-		assertEquals(Integer.valueOf(i), i2);
+		assertEquals(valueOf(i), i2);
 		assertEquals(i, i2.intValue());
 		
 		String str = "bola";
