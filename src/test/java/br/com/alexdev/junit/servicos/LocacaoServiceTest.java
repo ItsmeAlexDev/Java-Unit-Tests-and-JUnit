@@ -30,19 +30,16 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 
-import br.ce.wcaquino.runners.ParallelRunner;
 import br.com.alexdev.junit.daos.LocacaoDAO;
 import br.com.alexdev.junit.entidades.Filme;
 import br.com.alexdev.junit.entidades.Locacao;
 import br.com.alexdev.junit.entidades.Usuario;
 
-@RunWith(ParallelRunner.class)
 public class LocacaoServiceTest {
 
 	private Usuario user;

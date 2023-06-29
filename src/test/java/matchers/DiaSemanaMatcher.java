@@ -1,9 +1,9 @@
 package matchers;
 
-import static br.ce.wcaquino.utils.DataUtils.verificarDiaSemana;
 import static java.util.Calendar.DAY_OF_WEEK;
 import static java.util.Calendar.LONG;
 import static java.util.Calendar.getInstance;
+import static br.com.alexdev.junit.utils.DataUtils.verificarDiaSemana;
 
 import java.util.Calendar;
 import java.util.Date;
